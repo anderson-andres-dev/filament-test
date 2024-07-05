@@ -31,6 +31,13 @@ class User extends Authenticatable implements FilamentUser, HasAvatar
         'password',
     ];
 
+    public function setPasswordAttribute($value)
+    {
+        if ($value) {
+            $this->attributes['password'] = bcrypt($value);
+        }
+    }
+
     /**
      * The attributes that should be hidden for serialization.
      *

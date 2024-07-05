@@ -2,6 +2,9 @@
 
 namespace App\Providers\Filament;
 
+use App\Filament\Pages\Auth\Register;
+use Awcodes\FilamentGravatar\GravatarProvider;
+use Awcodes\FilamentGravatar\GravatarPlugin;
 use Filament\Forms\Components\FileUpload;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\DisableBladeIconComponents;
@@ -29,7 +32,7 @@ class AdminPanelProvider extends PanelProvider
             ->id('admin')
             ->path('admin')
             ->login()
-            ->registration()
+            ->registration(Register::class)
             ->passwordReset()
             ->emailVerification()
             ->colors([
@@ -41,6 +44,7 @@ class AdminPanelProvider extends PanelProvider
                 Pages\Dashboard::class,
             ])
             ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\\Filament\\Widgets')
+            ->defaultAvatarProvider(GravatarProvider::class)
             ->widgets([
                 Widgets\AccountWidget::class,
                 Widgets\FilamentInfoWidget::class,
@@ -60,7 +64,12 @@ class AdminPanelProvider extends PanelProvider
                 Authenticate::class,
             ])
             ->authGuard('web')
+            ->defaultAvatarProvider(GravatarProvider::class)
             ->plugins([
+                GravatarPlugin::make()
+                    ->default('robohash') // Opcional: define un avatar por defecto
+                    ->size(200)           // Opcional: define el tamaño del avatar
+                    ->rating('pg'),
                 BreezyCore::make()
                     ->avatarUploadComponent(fn ($fileUpload) => $fileUpload->disableLabel())
                     // ->avatarUploadComponent(fn ($fileUpload) => $fileUpload->disk('profile-photos'))
@@ -72,7 +81,7 @@ class AdminPanelProvider extends PanelProvider
                         hasAvatars: true,
                         slug: 'my-profile'
                     ),
-
+                // GravatarPlugin::make(),
             ]);
     }
 }
